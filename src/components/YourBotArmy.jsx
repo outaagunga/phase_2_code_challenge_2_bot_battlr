@@ -9,6 +9,7 @@ const YourBotArmy = ({ enlistedBots, releaseBot }) => {
 
       <div className="row">
         {enlistedBots.map((bot) => (
+          // Place the key prop on the outermost element
           <div key={bot.id} className="card col-3 m-1">
             <img src={bot.avatar_url} className="card-img-top" alt={bot.name} />
             <div className="card-body">
