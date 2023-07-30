@@ -1,42 +1,82 @@
+// Import necessary modules
 import React, { useState, useEffect } from "react";
 import BotCollection from "./components/BotCollection";
 import YourBotArmy from "./components/YourBotArmy";
 
+// Define the main App component
 const App = () => {
+  // State to store the list of all bots and enlisted bots
   const [bots, setBots] = useState([]);
   const [enlistedBots, setEnlistedBots] = useState([]);
 
+  // Fetch bots from the server when the component mounts
   useEffect(() => {
     fetchBots();
   }, []);
 
+  // Function to fetch bots from the server
   const fetchBots = async () => {
     try {
-      const response = await fetch("http://localhost:8001/bots"); // Assuming json-server is running on port 8001
+      // Make a GET request to fetch the bots data from the server
+      const response = await fetch("http://localhost:8001/bots");
       const data = await response.json();
+      // Update the 'bots' state with the fetched data
       setBots(data);
     } catch (error) {
       console.error("Error fetching bots:", error);
     }
   };
 
+  // Function to enlist a bot into the enlistedBots array
   const enlistBot = (bot) => {
-    // Add the bot object to the enlistedBots array
     setEnlistedBots((prevEnlistedBots) => [...prevEnlistedBots, bot]);
   };
 
+  // Function to release a bot from the enlistedBots array
   const releaseBot = (botId) => {
-    // Remove the bot object from the enlistedBots array
     setEnlistedBots((prevEnlistedBots) =>
       prevEnlistedBots.filter((bot) => bot.id !== botId)
     );
   };
 
+  // Function to delete a bot from the server
+  const deleteBotFromServer = async (botId) => {
+    try {
+      // Make a DELETE request to the server to delete the bot
+      await fetch(`http://localhost:8001/bots/${botId}`, {
+        method: "DELETE",
+      });
+    } catch (error) {
+      console.error("Error deleting bot:", error);
+      throw error;
+    }
+  };
+
+  // Function to delete a bot from the server and remove it from the enlistedBots array
+  const deleteBot = async (botId) => {
+    try {
+      // Call the function to delete the bot from the server
+      await deleteBotFromServer(botId);
+
+      // If the deletion is successful, remove the bot from the enlistedBots array
+      setEnlistedBots((prevEnlistedBots) =>
+        prevEnlistedBots.filter((bot) => bot.id !== botId)
+      );
+    } catch (error) {
+      console.error("Error deleting bot:", error);
+    }
+  };
+
+  // Render the main App component
   return (
     <div>
       <h1>Welcome to Bot Battlr</h1>
-      {/* Pass the enlistedBots state to YourBotArmy component */}
-      <YourBotArmy enlistedBots={enlistedBots} releaseBot={releaseBot} />
+      {/* Pass the enlistedBots state and both handler functions to YourBotArmy component */}
+      <YourBotArmy
+        enlistedBots={enlistedBots}
+        releaseBot={releaseBot}
+        deleteBot={deleteBot}
+      />
       <BotCollection
         bots={bots}
         enlistBot={enlistBot}
