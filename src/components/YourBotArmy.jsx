@@ -1,7 +1,20 @@
 import React from "react";
 
-// Component to display the enlisted bots in the user's bot army
-const YourBotArmy = ({ enlistedBots, releaseBot, deleteBot }) => {
+const YourBotArmy = ({ enlistedBots, releaseBot, deleteBot, allBots }) => {
+  // Function to handle the enlistment of a bot
+  const handleEnlist = (bot) => {
+    // Check if the bot is already enlisted
+    const isEnlisted = enlistedBots.some(
+      (enlistedBot) => enlistedBot.id === bot.id
+    );
+
+    // If the bot is not enlisted, enlist it
+    if (!isEnlisted) {
+      releaseBot(bot.id); // Ensure we remove any duplicate entry if present
+      releaseBot(bot.id); // Ensure we remove any duplicate entry if present
+    }
+  };
+
   // Function to handle the deletion of a bot
   const handleDelete = async (botId) => {
     try {
@@ -15,16 +28,20 @@ const YourBotArmy = ({ enlistedBots, releaseBot, deleteBot }) => {
     }
   };
 
+  // Filter enlisted bots from allBots
+  const enlistedBotIds = new Set(enlistedBots.map((bot) => bot.id));
+  const enlistedBotsData = allBots.filter((bot) => enlistedBotIds.has(bot.id));
+
   return (
     <>
       {/* Display the title */}
       <div className="col-11 border border-primary">
-        <h2>Your Bot Army</h2>
+        <h3>Your Bot Army</h3>
       </div>
 
       {/* Display the enlisted bots */}
       <div className="row">
-        {enlistedBots.map((bot) => (
+        {enlistedBotsData.map((bot) => (
           <div key={bot.id} className="card col-3 m-1">
             {/* Display the bot's avatar */}
             <img src={bot.avatar_url} className="card-img-top" alt={bot.name} />
@@ -46,12 +63,19 @@ const YourBotArmy = ({ enlistedBots, releaseBot, deleteBot }) => {
                 className="btn btn-danger font-small"
                 onClick={() => handleDelete(bot.id)}
               >
-                Delete
+                X
               </button>
             </div>
           </div>
         ))}
       </div>
+
+      {/* Displaying a message if there are no enlisted bots */}
+      {enlistedBotsData.length === 0 && (
+        <div className="col-11 border border-primary mt-3">
+          <h4>Your favorite bots will appear here.</h4>
+        </div>
+      )}
     </>
   );
 };

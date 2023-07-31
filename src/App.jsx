@@ -1,4 +1,3 @@
-// Import necessary modules
 import React, { useState, useEffect } from "react";
 import BotCollection from "./components/BotCollection";
 import YourBotArmy from "./components/YourBotArmy";
@@ -6,8 +5,8 @@ import YourBotArmy from "./components/YourBotArmy";
 // Define the main App component
 const App = () => {
   // State to store the list of all bots and enlisted bots
-  const [bots, setBots] = useState([]);
-  const [enlistedBots, setEnlistedBots] = useState([]);
+  const [bots, setBots] = useState([]); // State to store all bots data
+  const [enlistedBots, setEnlistedBots] = useState([]); // State to store enlisted bots
 
   // Fetch bots from the server when the component mounts
   useEffect(() => {
@@ -70,12 +69,13 @@ const App = () => {
   // Render the main App component
   return (
     <div>
-      <h1>Welcome to Bot Battlr</h1>
+      <h2>Welcome to Bot Battlr</h2>
       {/* Pass the enlistedBots state and both handler functions to YourBotArmy component */}
       <YourBotArmy
         enlistedBots={enlistedBots}
         releaseBot={releaseBot}
         deleteBot={deleteBot}
+        allBots={bots} // Ensuring that I pass the 'bots' state as the 'allBots' prop
       />
       <BotCollection
         bots={bots}
